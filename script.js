@@ -135,10 +135,13 @@ const handleClicks = (btnsArray, objects) => {
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-dark">Save</button>
+                        <button type="button" class="btn btn-danger mt-2">Delete</button>
+
                     </div>
                 </form>
             `
 			const formulaire = document.querySelector("form")
+			const deleteBtn = document.querySelector(".btn-danger")
 
 			formulaire.addEventListener("submit", (e) => {
 				e.preventDefault()
@@ -147,6 +150,13 @@ const handleClicks = (btnsArray, objects) => {
 					formulaire.imageUrl.value,
 					objects[i].id
 				)
+			})
+
+			/*  delete click  */
+			deleteBtn.addEventListener("click", () => {
+				if (confirm("vous alez delete un titre !")) {
+					deleteRequest(objects[i].id)
+				}
 			})
 		})
 	})
@@ -232,6 +242,25 @@ const postNewBook = (newValue, newImage) => {
 	})
 }
 
+/*  delete request  */
+const deleteRequest = (bookId) => {
+	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books/${bookId}`
+	const options = {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	}
+
+	/*  delete request */
+	fetch(url, options)
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data)
+			appSection.innerHTML = ""
+			fetchData(baseUrl, writeHtml)
+		})
+}
 appInit()
 
 /*
