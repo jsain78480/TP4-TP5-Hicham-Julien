@@ -1,124 +1,173 @@
-const appContainer = document.querySelector(".app")
+const appSection = document.querySelector(".app")
 const modalTitle = document.querySelector(".modal-title")
 const modalBody = document.querySelector(".modal-body")
-const modalFooter = document.querySelector(".modal-footer")
 
-/*  fn initialize  */
-const initApp = () => {
-	dataFetch(
-		"https://basic-rest-flask.martinpedraza.repl.co/api/books",
-		writeHtml
-	)
+const addBtn = document.querySelector(".add-btn")
+
+const toastBody = document.querySelector(".toast-body")
+
+/*  base url for the API  */
+const baseUrl = "https://basic-rest-flask.martinpedraza.repl.co/api/books"
+
+/*  event listeners */
+// ADD btn
+addBtn.addEventListener("click", () => {
+	modalTitle.textContent = "Add a book"
+	modalBody.innerHTML = `
+                <form>
+                   	<div class="mb-3">
+				   		<label for="title" class="form-label">Title</label>
+				   		<input required type="text" class="form-control" id="title"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="imageUrl" class="form-label">Image URL</label>
+                        <input required type="text" class="form-control" id="imageUrl"  >
+						<div class="img-preview d-none"></div>
+					</div>
+						<div class="d-grid">
+                        <button type="submit" class="btn btn-dark">Save</button>
+					</div>
+				</form>
+				
+				`
+
+	const imageUrlDOM = document.querySelector("#imageUrl")
+	// console.log(imageUrlDOM)
+
+	imageUrlDOM.addEventListener("input", () => {
+		const imagePreview = document.querySelector(".img-preview")
+		const formulaire = document.querySelector("form")
+
+		imagePreview.classList.remove("d-none")
+		imagePreview.innerHTML = `<img src="${imageUrlDOM.value}" alt="image preview" class="mt-2 img-thumbnail" > `
+
+		formulaire.addEventListener("submit", (e) => {
+			const newValue = formulaire.title.value
+			const newImage = formulaire.imageUrl.value
+			e.preventDefault()
+			postNewBook(newValue, newImage)
+			console.log(newValue, newImage)
+		})
+	})
+})
+
+/*  app inisialilzation  */
+const appInit = () => {
+	fetchData(baseUrl, writeHtml)
 }
 
-/* fetch data   */
 /**
- * Fetches data from the specified URL using the Fetch API and invokes the provided callback.
+ * Fetches data from the specified URL and invokes the callback with the retrieved data.
  *
- * @param {string} url // API endpoint
- * @param {fn} callback // fn to be called once  the fetch is done
+ * @param {string} url - The URL from which to fetch the data.
+ * @param {(data: any) => void} callback - The callback function to be invoked with the retrieved data.
+ * @throws {TypeError} Will throw an error if url is not a string or callback is not a function.
  */
-const dataFetch = (url, callback) => {
+
+const fetchData = (url, callback) => {
 	fetch(url)
 		.then((res) => {
 			if (res.ok) {
-				res.json().then((livres) => {
-					callback(livres)
+				res.json().then((data) => {
+					callback(data)
 				})
 			} else {
-				appContainer.innerHTML =
-					"<h2 class='text-danger'>error with the data...</h2> "
+				appSection.innerHTML = `<h2 class='text-danger text-center'>Error fetching data ...</h2>
+                    <img src="./assets/offline.gif" alt="offline" >
+                    `
 			}
 		})
-		.catch((err) => {
-			// alert(err)
-			appContainer.innerHTML =
-				"<h2 class='text-danger'>error with the data...</h2> "
-		})
+		.catch(
+			(err) =>
+				(appSection.innerHTML = `<h2 class='text-danger text-center'>Error fetching data ...</h2>
+                <p>${err}</p>
+                    <img src="./assets/	offline.gif" alt="offline" >
+                    `)
+		)
 }
 
-/*  write html  */
+/**
+ * Writes HTML content for each book in the provided array and appends it to the appSection.
+ *
+ * @param {Array} livres - An array containing book objects.
+ * @throws {TypeError} Will throw an error if livres is not an array.
+ */
 const writeHtml = (livres) => {
+	document.querySelector(".spinner-container").style.display = "none"
 	livres.forEach((livre) => {
-		document.querySelector(".spinner-container").style.display = "none"
-		appContainer.innerHTML += `
+		appSection.innerHTML += `
             <div class="col">
-                <article class="card" id="card-id-${livre.id}" >
-                    <img class="card-img-top" src="${livre.imageUrl}" alt="${livre.title}">
+                <article class="card" id="${livre.id}">                
+                    <img src="${livre.imageUrl}" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h3 class="card-title">${livre.title}</h3>
-                        <button class="btn btn-dark edit" 
-                            data-bs-toggle="modal"
-			                data-bs-target="#bookModal">
-                            Edit
-                        </button>
-                    </div>
+                        <h5 class="card-title">${livre.title}</h5>
+                        <button data-bs-toggle="modal"
+			                    data-bs-target="#bookModal" 
+                                class="btn btn-dark edit">Edit</button>
+                    </div>    
                 </article>
             </div>
             `
 	})
 	const editBtnArray = document.querySelectorAll(".edit")
-	addClicks(editBtnArray, livres)
+	handleClicks(editBtnArray, livres)
 }
 
-/*  clicks   */
-/**Adds click event listeners to an array of buttons, invoking a callback function with corresponding data.
+/*  handle clicks  */
+/**
  *
- * @param {HTMLButtonElement[]} btnsArray - An array of button elements to which click event listeners will be added.
- * @param {any[]} livres - An array of data representing the livres (books) corresponding to each button.
+ * @param {NodeList|HTMLCollection|Array} btnsArray // nodes from the DOM
+ * @param {Array} objects // an array of items
  */
-const addClicks = (btnsArray, livres) => {
+const handleClicks = (btnsArray, objects) => {
 	btnsArray.forEach((btn, i) => {
 		btn.addEventListener("click", () => {
-			modalTitle.textContent = "Edit Mode"
+			modalTitle.textContent = "Edit mode"
 			modalBody.innerHTML = `
                 <form>
-                    <div class="mb-3">
+                   <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
-                        <input required type="text" class="form-control" id="title" value="${livres[i].title}" >
+                        <input required type="text" class="form-control" id="title" value="${objects[i].title}" >
                     </div>
-
                     <div class="mb-3">
-                        <label for="imageUrl" class="form-label">Image Url</label>
-                        <input required type="text" class="form-control" id="imageUrl" value="${livres[i].imageUrl}" >
+                        <label for="imageUrl" class="form-label">Image URL</label>
+                        <input required type="text" class="form-control" id="imageUrl" value="${objects[i].imageUrl}" >
                     </div>
-                    <div class="d-grid gap-2">
-                       <button type="submit" class="btn btn-primary btn-block">Save</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-dark">Save</button>
                     </div>
                 </form>
             `
-
 			const formulaire = document.querySelector("form")
+
 			formulaire.addEventListener("submit", (e) => {
-				formHandle(e, formulaire, livres[i].id)
+				e.preventDefault()
+				handleFormSubmit(
+					formulaire.title.value,
+					formulaire.imageUrl.value,
+					objects[i].id
+				)
 			})
 		})
 	})
 }
 
-const formHandle = (e, formulaire, cardId) => {
-	console.log(cardId)
-	e.preventDefault()
+/*  handle submit  */
+const handleFormSubmit = (newTitle, newImageUrl, bookId) => {
+	console.log(newTitle, newImageUrl, bookId)
+	postData(newTitle, newImageUrl, bookId)
+}
+/* post data  */
+const postData = (newTitle, newImageUrl, bookId) => {
 	const myModalEl = document.querySelector("#bookModal")
 	const modal = bootstrap.Modal.getInstance(myModalEl)
-	modal.hide()
 
-	/*  validation form  */
-	const alphanumericRegex = /^[a-zA-Z0-9/.:-_ 'éùçà(),-=?&]+$/
-	/* alphanumeric test */
-	if (
-		!alphanumericRegex.test(formulaire.title.value) ||
-		!alphanumericRegex.test(formulaire.imageUrl.value)
-	) {
-		alert("No weird characters !!")
-		return
-	}
-
-	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books/${cardId}`
+	/*  POST FETCH  */
+	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books/${bookId}`
 
 	const data = {
-		title: formulaire.title.value,
-		imageUrl: formulaire.imageUrl.value,
+		title: newTitle,
+		imageUrl: newImageUrl,
 	}
 
 	const options = {
@@ -132,48 +181,79 @@ const formHandle = (e, formulaire, cardId) => {
 	fetch(url, options)
 		.then((response) => response.json())
 		.then((data) => {
-			console.log("Response:", data)
-			dataFetch(
-				`https://basic-rest-flask.martinpedraza.repl.co/api/books/${cardId}`,
-				(book) => {
-					cardUpdate(book)
-				}
-			)
+			// console.log("Response:", data)
+			modal.hide()
+			appSection.style.display = "none"
+			// show confirmation mesasge
+			const toastLiveExample = document.getElementById("liveToast")
+			const toast = new bootstrap.Toast(toastLiveExample)
+			toastBody.textContent = data.msg
+			toast.show()
+			// update DOM
+			const selectedCard = document.getElementById(`${bookId}`)
+			fetch(url).then((res) => {
+				res.json().then((data) => {
+					selectedCard.children[0].src = data.imageUrl
+					selectedCard.children[1].children[0].textContent = data.title
+				})
+			})
+			setInterval(() => {
+				toast.hide()
+				appSection.style.display = "flex"
+			}, 1650)
+			// console.log(selectedCard)
 		})
 		.catch((error) => {
 			console.error("Error:", error)
 			// Handle any errors
 		})
-
-	console.log(formulaire.title.value, formulaire.imageUrl.value)
 }
 
-/* metre a jour la cart */
-const cardUpdate = (book) => {
-	const selectedBook = document.querySelector(`#card-id-${book.id}`)
-	selectedBook.children[1].children[0].textContent = book.title
-	selectedBook.children[0].src = book.imageUrl
+/*  add new book  */
+const postNewBook = (newValue, newImage) => {
+	/*  POST FETCH  */
+	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books`
+
+	const data = {
+		title: newValue,
+		imageUrl: newImage,
+	}
+
+	const options = {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(data),
+	}
+
+	fetch(url, options).then((response) => {
+		console.log(response.json())
+	})
 }
 
-initApp()
+appInit()
 
 /*
 fetch("https://basic-rest-flask.martinpedraza.repl.co/api/books")
 	.then((response) => response.json())
 	.then((livres) => {
 		livres.forEach((livre) => {
-            appContainer.innerHTML += `
+			appSection.innerHTML += `
             <div class="col">
-                <article class="card" >
-                    <img class="card-img-top" src="${livre.imageUrl}" alt="${livre.title}">
+                <article class="card">                
+                    <img src="${livre.imageUrl}" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h3 class="card-title">${livre.title}</h3>
-                        <button class="btn btn-dark">Edit</button>
-                    </div>
+                        <h5 class="card-title">${livre.title}</h5>
+                        <button data-bs-toggle="modal"
+			                    data-bs-target="#bookModal" 
+                                class="btn btn-dark edit">Edit</button>
+                    </div>    
                 </article>
             </div>
             `
 		})
+		const editBtnArray = document.querySelectorAll(".edit")
+		console.log(editBtnArray, "select btns ...")
 	})
-
     */
