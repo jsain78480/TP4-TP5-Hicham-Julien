@@ -221,6 +221,10 @@ const postData = (newTitle, newImageUrl, bookId) => {
 
 /*  add new book  */
 const postNewBook = (newValue, newImage) => {
+	/* select modal  */
+	const myModalEl = document.querySelector("#bookModal")
+	const modal = bootstrap.Modal.getInstance(myModalEl)
+
 	/*  POST FETCH  */
 	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books`
 
@@ -239,11 +243,18 @@ const postNewBook = (newValue, newImage) => {
 
 	fetch(url, options).then((response) => {
 		console.log(response.json())
+		modal.hide()	
+		appSection.innerHTML = ""
+		fetchData(baseUrl, writeHtml)
 	})
 }
 
 /*  delete request  */
 const deleteRequest = (bookId) => {
+	/* delete modal */
+	const myModalEl = document.querySelector("#bookModal")
+	const modal = bootstrap.Modal.getInstance(myModalEl)
+
 	const url = `https://basic-rest-flask.martinpedraza.repl.co/api/books/${bookId}`
 	const options = {
 		method: "DELETE",
@@ -257,6 +268,7 @@ const deleteRequest = (bookId) => {
 		.then((response) => response.json())
 		.then((data) => {
 			console.log(data)
+			modal.hide()
 			appSection.innerHTML = ""
 			fetchData(baseUrl, writeHtml)
 		})
