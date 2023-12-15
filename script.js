@@ -94,21 +94,25 @@ const fetchData = (url, callback) => {
  */
 const writeHtml = (livres) => {
 	document.querySelector(".spinner-container").style.display = "none"
-	livres.forEach((livre) => {
-		appSection.innerHTML += `
+	if (livres.length > 0) {
+		livres.forEach((livre) => {
+			appSection.innerHTML += `
             <div class="col">
-                <article class="card" id="${livre.id}">                
-                    <img src="${livre.imageUrl}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${livre.title}</h5>
-                        <button data-bs-toggle="modal"
-			                    data-bs-target="#bookModal" 
-                                class="btn btn-dark edit">Edit</button>
-                    </div>    
-                </article>
+				<article class="card" id="${livre.id}">                
+					<img src="${livre.imageUrl}" class="card-img-top" alt="...">
+					<div class="card-body">
+					<h5 class="card-title">${livre.title}</h5>
+					<button data-bs-toggle="modal"
+					data-bs-target="#bookModal" 
+					class="btn btn-dark edit">Edit</button>
+					</div>    
+				</article>
             </div>
             `
-	})
+		})
+	} else {
+		appSection.innerHTML = "<h2>no books found ... </h2>"
+	}
 	const editBtnArray = document.querySelectorAll(".edit")
 	handleClicks(editBtnArray, livres)
 }
@@ -242,8 +246,8 @@ const postNewBook = (newValue, newImage) => {
 	}
 
 	fetch(url, options).then((response) => {
-		console.log(response.json())
-		modal.hide()	
+		// console.log(response.json())
+		modal.hide()
 		appSection.innerHTML = ""
 		fetchData(baseUrl, writeHtml)
 	})
