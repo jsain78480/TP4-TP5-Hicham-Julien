@@ -26,92 +26,36 @@
 			.position-absolute {
 				right: clamp(30px, 6%, 400px);
 			}
+			body {
+				background-image: url('./assets/Les-meilleures-formations-developpeur-web-en-ligne-1080x675.png');
+			}
+			
 		</style>
 	</head>
+	<nav class="navbar navbar-light" style="background-color: #ac2c46;">
+		<div class="container-fluid">
+		  <a class="navbar-brand" style="font-weight: bold; color: #f3e8ea;" href="#">CinéEnsea</a>
+		  <img src="./assets/20210103162127.sJNUgc.png" alt="" width="100" height="70" class="d-inline-block align-text-top">
+		  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		  </button>
+		  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+			  <a class="nav-link active" style="font-weight: bold; color: #f3e8ea;"aria-current="page" href="index.html">Accueil</a>
+			  <a class="nav-link" style="font-weight: bold; color: #f3e8ea;"href="films.html">Films</a>
+			  <a class="nav-link" style="font-weight: bold; color: #f3e8ea;"href="series.html">Séries</a>
+			</div>
+		  </div>
+		</div>
+	</nav>
 	<body>
 		<div class="container">
-			<h1 class="text-center">My Favorite Books</h1>
-
+			<h1 class="text-center" style="font-weight: bold;color :#ac2c46">Accueil TP Julien et Hicham</h1>
 			<section
 				class="app row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2"
 			></section>
-			<div class="spinner-container">
-				<div class="d-flex justify-content-center m-5">
-					<div class="spinner-border" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-				</div>
-			</div>
-			<div class="position-absolute">
-				<button
-					class="btn btn-success mt-2 add-btn"
-					data-bs-toggle="modal"
-					data-bs-target="#bookModal"
-				>
-					<img src="./assets/plus-circle.svg" alt="add btn" />
-				</button>
-			</div>
 		</div>
 
-		<!-- Modal -->
-		<div
-			class="modal fade"
-			id="bookModal"
-			tabindex="-1"
-			aria-labelledby="exampleModalLabel"
-			aria-hidden="true"
-		>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-						<button
-							type="button"
-							class="btn-close"
-							data-bs-dismiss="modal"
-							aria-label="Close"
-						></button>
-					</div>
-					<div class="modal-body">...</div>
-					<div class="modal-footer">
-						<button
-							type="button"
-							class="btn btn-secondary"
-							data-bs-dismiss="modal"
-						>
-							Close
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!--  TOAST  -->
-		<div
-			aria-live="polite"
-			aria-atomic="true"
-			class="d-flex justify-content-center align-items-center w-100"
-		>
-			<div
-				id="liveToast"
-				class="toast"
-				role="alert"
-				aria-live="assertive"
-				aria-atomic="true"
-			>
-				<div class="toast-header bg-light">
-					<img src="./assets/ok.jpg" class="rounded me-2" alt="ok message" />
-					<strong class="me-auto">Message</strong>
-					<button
-						type="button"
-						class="btn-close"
-						data-bs-dismiss="toast"
-						aria-label="Close"
-					></button>
-				</div>
-				<div class="toast-body bg-secondary text-white">...</div>
-			</div>
-		</div>
 
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -119,5 +63,7 @@
 			crossorigin="anonymous"
 		></script>
 		<script src="./script.js"></script>
+		<script src="./scriptSeries.js"></script>
+		<script src="./scriptfilm.js"></script>
 	</body>
 </html>
