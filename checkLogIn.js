@@ -1,5 +1,5 @@
 // base uri API
-const URI = "https://node-expess.juliensaintlege.repl.co/api/secret"
+const URI = "https://b5f44dac-86b8-4457-8e98-8d1760c02955-00-3eu32yy9n3td7.worf.replit.dev/api/secret"
 
 const checkUser = async () => {
 	const token = localStorage.getItem("token")
