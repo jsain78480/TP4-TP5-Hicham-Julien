@@ -7,7 +7,7 @@ const addBtn = document.querySelector(".add-btn")
 const toastBody = document.querySelector(".toast-body")
 
 /*  base url for the API  */
-const baseUrlfilm = "https://films.juliensaintlege.repl.co/api/films"
+const baseUrlfilm = "https://0e0fa25f-0dd1-42e4-9cdd-864d4df38a19-00-r7nhf94xtkwr.riker.replit.dev/api/films"
 
 /*  event listeners */
 // ADD btn
